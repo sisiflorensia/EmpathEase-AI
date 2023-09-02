@@ -1,0 +1,157 @@
+body {
+    font-family: 'inter', Arial, sans-serif;
+    margin: 0;
+}
+
+#uiInterface {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* gap: 32px; */
+}
+
+#removeAfter {
+    padding: 40px;
+}
+
+#nameForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    color: #6A32BE;
+    text-align: center;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+p {
+    color: #000;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+@keyframes rotateAndMove {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    25%, 75% {
+        transform: translateY(-10px) rotate(90deg); /* At 25% point, it's halfway rotated and at the peak of its vertical movement */
+    }
+    50% {
+        transform: translateY(0) rotate(180deg); /* At 50% point, it's fully rotated and back to original vertical position */
+    }
+}
+
+.rotating-svg-container {
+    width: 360px; 
+    height: 360px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('../static/images/color-group.png'); /* Replace with your image path */
+    background-size: cover; /* Ensures the image covers the entire container */
+    background-repeat: no-repeat; /* Ensures the image doesn't repeat */
+    background-position: center; /* Centers the image in the container */
+    overflow: hidden; Ensures that rotating SVG won't exceed container bounds
+}
+
+#rotatingSvg {
+    width: 272px; 
+    height: 273px; 
+    transform-origin: center;
+    animation: rotateAndMove 10s infinite;
+}
+
+.fade {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.5s, max-height 0.5s;
+}
+
+.fade.show {
+    opacity: 1;
+    max-height: 1000px;  /* Adjust this value based on your content height. */
+    transition: opacity 0.5s, max-height 0.5s;
+}
+
+.fade:not(.show) > * {
+    margin: 0;
+}
+
+#nameText {
+    margin: 120px auto 24px auto;
+}
+
+input:focus { 
+    outline: none !important;
+ }
+
+.input-form {
+    display: flex;
+    direction: column;
+    width: 100%;
+    max-width: 360px;
+    align-items: center;
+    justify-content: space-between;
+    height: 32px;
+    line-height: 24;
+    border-radius: 32px;
+    border: 1px solid #6AE1D1;
+    padding: 8px 24px;
+    font-size: 24px;
+
+    #firstname {
+        border: none;
+        width: 240px;
+    }
+
+    .submit {
+        color: #000000;
+        background-color: #6AE1D1;
+        height: 48px;
+        border-radius: 0 32px 32px 0;
+        margin: 0 -24px;
+        width: 120px;
+        font-weight: 600;
+    }
+}
+
+.subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    color: #888888;
+    margin: 4px auto;
+    font-style: italic;
+}
+
+.promise {
+    margin: 240px 120px 40px 120px;
+    background-color: #e9f5f9;
+    padding: 20px;
+    border: 1px solid #c9e6ee;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/* Media query for screens smaller than 600px (e.g., mobile) */
+@media only screen and (max-width: 600px) {
+    .promise {
+        margin: 120px 0px 0px 0px;
+    }
+}
