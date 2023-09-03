@@ -26,13 +26,15 @@ UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
 
 app = Flask(__name__)
 
-openai.api_key = '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'
+openai.api_key = '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'
     
 @app.route('/', methods=['GET'])
 def home():
     return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
+
+
 def upload_audio():
     audio_file = request.files.get('audio')
         
@@ -42,8 +44,24 @@ def upload_audio():
         # You can process the audio file here...
         model = whisper.load_model("base")
         result = model.transcribe(filepath)
+        # text_result = result["text"]
         return result
     return jsonify({"message": "Failed to upload audio"}), 400
+
+# def get_sentiment(text):
+#     response = openai.Completion.create(
+#         engine="text-davinci-002",
+#         prompt=f"Sentiment analysis of the following text:\n{text}\n",
+#         temperature=0.5,
+#         max_tokens=1,
+#         top_p=1,
+#         frequency_penalty=0,
+#         presence_penalty=0,
+#         stop=["\n"]
+#     )
+
+#     sentiment = response.choices[0].text.strip()
+#     return sentiment
     
 # @app.route('/process_audio', methods=['POST'])
 # def process_audio():
