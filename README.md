@@ -1,8 +1,10 @@
 # EmpathEase-AI: Empathy Module for A.G.A.
 
 ## Emotion Processing Partner with AI-Powered Empathy
-- Core capability: Sentiment Analysis & Live Responses
-- Demo Objective: Navigate Office Conflicts using AI to De-escalate Negative Emotions
+### Core capability: 
+***Sentiment Analysis & Live Responses***
+### Demo Objective: 
+***Navigate Office Conflicts using AI to De-escalate Negative Emotions***
 
 ### Use case:
 - Immediate venting after receiving negative feedback or have conflict among coworkers or bosses
@@ -31,10 +33,10 @@ Infused humanity & values into AI to do good for the betterment of our world. Hu
 
   
 ### Minimum Loveable Product - MLP scope:
-- Give user comfort, feeling of being heard, and reduce the level of negative emotion.
+*Give user comfort, feeling of being heard, and reduce the level of negative emotion.*
 
 ### Desired additional output: Context extraction
-Aggregated (confidential) & objective (emotion-free) summary/context to support conflict mediation/resolution.
+*Aggregated (confidential) & objective (emotion-free) summary/context to support conflict mediation/resolution.*
 
 
 
