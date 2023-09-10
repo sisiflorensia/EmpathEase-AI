@@ -129,12 +129,14 @@
     </div>
 
     <script>
+        
         let svgState = 0;
         let textState = 0;
 
         document.addEventListener("DOMContentLoaded", function() {
             // Ensure the DOM has been loaded before setting up the event listeners
             document.getElementById('nameForm').addEventListener('submit', function(e) {
+            
                 e.preventDefault(); // Prevent the form from refreshing the page.
 
                 let firstname = document.getElementById('firstname').value;
@@ -296,6 +298,17 @@
             });
             const data = await response.json();
             console.log(data);  // Handle the response from Flask here.
+            const audio = new Audio(data.audio_path);
+            audio.play();
+        }
+
+        function handleResponse(data) {
+            const audio = new Audio(data.audio_path);
+            audio.play();
+            // let audioElement = document.createElement("audio");
+            // audioElement.src = data.audio_path;
+            // audioElement.autoplay = true;
+            // document.body.appendChild(audioElement);
         }
     </script>
 </body>

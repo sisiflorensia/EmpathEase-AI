@@ -1,112 +1,107 @@
-# import io
 import os
-from flask import Flask, render_template, render_template_string, request, jsonify
-import openai
-from scipy.io import wavfile
-import openai
+import random
+import re
+from flask import Flask, render_template, request, jsonify
 import whisper
-# import numpy as np
-# from tempfile import NamedTemporaryFile
-
-# # Get the uploaded file from request
-# audio_file = request.files.get('file')
-
-# # Save it to a temporary location
-# temp_file = NamedTemporaryFile(delete=False, suffix=".wav")
-# audio_file.save(temp_file.name)
-
-# # Now load it using whisper
-# audio = whisper.load_audio(temp_file.name)
-
-# Once done, you can delete the temporary file
-#os.unlink(temp_file.name)
+from transformers import pipeline
+import google.generativeai as palm
+from gtts import gTTS
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads')
 
-
 app = Flask(__name__)
 
-openai.api_key = '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'
+palm.configure(api_key="AIzaSyDvlftPu0O4ZxbbG7DQFc0MeaG3VxQPeLc")
     
 @app.route('/', methods=['GET'])
 def home():
     return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
-
-
 def upload_audio():
     audio_file = request.files.get('audio')
         
     if audio_file:
         filepath = os.path.join("uploads", "received_audio.wav")
         audio_file.save(filepath)
-        # You can process the audio file here...
         model = whisper.load_model("base")
         result = model.transcribe(filepath)
-        # text_result = result["text"]
-        return result
+        sentiment = speech_to_sentiment(result["text"])
+        sentiment_level = int(sentiment[0]["label"][0])
+        sentiment_score = sentiment[0]["score"]
+
+        response = apiPalm(result["text"], sentiment_level, sentiment_score)
+        cleaned_response = re.sub(r'[^a-zA-Z0-9\s]', '', response)
+        audio_path = generate_audio(cleaned_response)
+
+        os.system(f"start {audio_path}")
+
+        combined_result = {
+            "transcription": result["text"],
+            "sentiment": sentiment,
+            "response": response,
+            "audio_path": audio_path
+        }
+
+        return jsonify(combined_result)
+        # return result
     return jsonify({"message": "Failed to upload audio"}), 400
 
-# def get_sentiment(text):
-#     response = openai.Completion.create(
-#         engine="text-davinci-002",
-#         prompt=f"Sentiment analysis of the following text:\n{text}\n",
-#         temperature=0.5,
-#         max_tokens=1,
-#         top_p=1,
-#         frequency_penalty=0,
-#         presence_penalty=0,
-#         stop=["\n"]
-#     )
+# Initialize the emotion analysis pipeline
+emotion_classifier = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+def speech_to_sentiment(transcribed_text):
 
-#     sentiment = response.choices[0].text.strip()
-#     return sentiment
-    
-# @app.route('/process_audio', methods=['POST'])
-# def process_audio():
-#     model = whisper.load_model("base")
-        
-#     # audio_file = request.files.get("file")
-#             # wav_data = audio_file.read()
+    # Analyze sentiment in the transcribed text
+    sentiment_result = emotion_classifier(transcribed_text)
+    return sentiment_result
 
-#         # sample_rate, audio_data = wavfile.read(io.BytesIO(wav_data))
-#         # numpy_array = np.array(audio_data)
+def apiPalm(message, sentiment_level, sentiment_score):
+    # Send the message to Palm's API and receive the response
 
-#         # result = model.transcribe(numpy_array)
+    empathetic_prompt  = f"Create a concise and great response to this emotional venting message from a user, and promote active listening, by probing with empathetic question and make the them feel heard. Use a maximum 10-word sentence: ${message}"
 
+    calmer_response = [
+        "Thank you for sharing. Take care.", 
+        "I appreciate your trust. Rest up.",
+        "Glad you spoke up. Wishing you well.",
+        "Always here to listen. Hope things improve.",
+        "Your feelings are valid. Take it easy.",
+        "Thank you for confiding. Better days ahead.",
+        "I'm here when needed. Look after yourself.",
+        "Acknowledging your words. Hope for relief soon.",
+        "Grateful you reached out. Stay strong.",
+        "Heard and understood. Take your time.",
+        "I'm glad you took the time to share your feelings with me. Remember to take care of yourself and reach out whenever you need to talk. Wishing you peace and clarity.",
+        "It sounds like you've been through a lot. Remember, it's okay to take a step back and rest when needed. I'm here whenever you want to chat.",
+        "Thank you for trusting me with your thoughts. I hope things get better for you soon. Remember, every day is a new opportunity for growth and healing.",
+        "I'm always here to lend an ear. Take some time for yourself and know that you're not alone in this. Wishing you strength.",
+        "It's important to let out your feelings, and I'm glad you chose to share them with me. Remember to breathe and give yourself the grace to heal. Reach out anytime.",
+        "I appreciate you opening up. Life has its challenges, but I believe in your resilience. Take all the time you need, and know I'm here to support you.",
+        "Thank you for sharing. It's a sign of strength to seek support when needed. I hope you find the peace and resolution you're looking for. Always here for you.",
+        "It's been a journey, hasn't it? Remember to be kind to yourself and know that brighter days are ahead. I'm here whenever you need a listening ear.",
+        "Your feelings are valid, and I'm grateful you shared them with me. Wishing you moments of calm and clarity ahead. Don't hesitate to reach out.",
+        "It's always a privilege to be here for you. I hope you find the comfort and solutions you seek. Remember, life has its ups and downs, but you're never alone in navigating them."
+    ]
 
-#     # with open("transcription.txt", "w", encoding="utf-8") as txt:
-#     #     txt.write(result["text"])
+    if sentiment_level == 1:
+        response = palm.generate_text(prompt=empathetic_prompt)
+        return response.result
+    elif sentiment_level == 2 and sentiment_score > 0.6:
+        response = palm.generate_text(prompt=empathetic_prompt)
+        return response.result
+    elif sentiment_level == 3 and sentiment_score < 0.4:
+        response = palm.generate_text(prompt=empathetic_prompt)
+        return response.result
+    else: 
+        return random.choice(calmer_response)
 
-#     # Get the uploaded file from request
-#     audio_file = request.files.get('file')
-
-#     # Save it to a temporary location
-#     temp_file = NamedTemporaryFile(delete=False, suffix=".wav")
-#     audio_file.save(temp_file.name)
-
-#     # Now load it using whisper
-#     audio = whisper.load_audio(temp_file.name)
-
-#     # Once done, you can delete the temporary file
-#     os.unlink(temp_file.name)
-
-#     # load audio and pad/trim it to fit 30 seconds
-    
-#     # make log-Mel spectrogram and move to the same device as the model
-#     mel = whisper.log_mel_spectrogram(audio).to(model.device)
-
-#     # detect the spoken language
-#     _, probs = model.detect_language(mel)
-#     print(f"Detected language: {max(probs, key=probs.get)}")
-
-#     # decode the audio
-#     options = whisper.DecodingOptions()
-#     result = whisper.decode(model, mel, options)
-
-#     # print the recognized text
-#     print(result.text)
+import datetime
+def generate_audio(command):
+    tts = gTTS(text=command, lang='en')
+    now = datetime.datetime.utcnow()
+    audio_path = "./static/" + str(now) + ".mp3"
+    tts.save(audio_path)
+    return audio_path
 
 if __name__ == '__main__':
     app.run(host='localhost', port = 5000, debug=True)
