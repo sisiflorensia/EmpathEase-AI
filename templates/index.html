@@ -14,9 +14,6 @@
     <div id="removeAfter">
         <form id="nameForm" class="fade show">
             <h1>Welcome to EmpathEase</h1>
-            <!-- <p class="subtitle">
-                Your safe space to express, reflect, and find solace.
-            </p> -->
             <p class="subtitle">
                 We understand the pressures and challenges of the workplace.
             </p>
@@ -179,7 +176,6 @@
 
         function handleButtonClick() {
             toggleSvg();
-            // captureVoice();
             changeText();
         }
 
@@ -305,10 +301,6 @@
         function handleResponse(data) {
             const audio = new Audio(data.audio_path);
             audio.play();
-            // let audioElement = document.createElement("audio");
-            // audioElement.src = data.audio_path;
-            // audioElement.autoplay = true;
-            // document.body.appendChild(audioElement);
         }
     </script>
 </body>
