@@ -10,5 +10,8 @@
             "src": "/(.*)",
             "dest": "api/hello.py"
         }
+    ],
+    "rewrites": [
+        { "source": "/(.*)", "destination": "/" }
     ]
 }
