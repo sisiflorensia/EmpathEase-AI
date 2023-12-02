@@ -1,0 +1,6 @@
+flask
+transformers
+gtts
+google.generativeai
+setuptools-rust
+git+https://github.com/openai/whisper.git 
